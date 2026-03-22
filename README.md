@@ -1,179 +1,200 @@
 # 🚀 LeadFlow CRM
 
-## 📌 Opis projektu
-LeadFlow CRM to aplikacja typu SaaS do zarządzania leadami (potencjalnymi klientami) oraz procesem sprzedaży.
+## 🎯 1. ZAŁOŻENIA PROJEKTU
 
-Użytkownik może:
-- zarządzać listą leadów
-- śledzić status kontaktu
-- analizować dane na dashboardzie
-- generować nowe leady
+### 🧠 Cel
 
-Projekt został zaprojektowany jako **produkcyjna aplikacja fullstack**, pokazująca realne umiejętności backend + frontend + deployment.
+LeadFlow CRM --- aplikacja do zarządzania leadami sprzedażowymi z
+naciskiem na: - prosty, ale realny workflow sprzedażowy - analitykę i
+wizualizacje - clean architecture (Vertical Slice) - pełny flow: auth →
+CRUD → analytics → deploy
 
----
+------------------------------------------------------------------------
 
-# 🧱 Stack technologiczny
+### 👤 Użytkownik końcowy może:
 
-## Backend
-- FastAPI
-- SQLAlchemy
-- PostgreSQL
-- Pydantic
-- JWT (auth)
+-   założyć konto i się zalogować
+-   zarządzać leadami (CRUD)
+-   zmieniać statusy (pipeline)
+-   filtrować i wyszukiwać leady
+-   widzieć dashboard (metryki + wykresy)
+-   dodawać notatki do leadów
+-   przypisywać leady do etapów (np. NEW → CONTACTED → WON)
 
-## Frontend
-- Next.js
-- React
-- Tailwind CSS
-- React Query / TanStack Query
+------------------------------------------------------------------------
 
-## Wykresy
-- Recharts (dashboard)
+## 🧩 Core features (MVP+)
 
-## Dev / Infra
-- Docker + docker-compose
-- Railway (backend + DB)
-- Vercel (frontend)
+### 🔐 Auth
 
----
+-   register / login
+-   JWT (access + refresh)
+-   hashowanie haseł
+-   ochrona endpointów
+-   refresh token flow (`/auth/refresh`)
 
-# 🎯 Funkcjonalności (MVP)
+------------------------------------------------------------------------
 
-## 🔐 Autoryzacja
-- Rejestracja użytkownika
-- Logowanie
-- JWT access + refresh token
-- Hashowanie haseł (bcrypt)
+### 📇 Leads
 
-## 👤 Użytkownik
-- Profil użytkownika
-- Izolacja danych (user widzi tylko swoje leady)
+-   create / update / delete
+-   soft delete (`is_deleted`)
+-   status (pipeline)
+-   email, name, company
+-   tagging (np. "hot", "cold")
+-   user ownership (`user_id`)
 
-## 📋 Lead Management
-- CRUD leadów
-- Pola:
-  - email
-  - company
-  - status (NEW, CONTACTED, QUALIFIED, CLOSED)
-  - notes
-  - created_at
+------------------------------------------------------------------------
 
-## 🔍 Filtrowanie i paginacja
-- filtrowanie po statusie
-- wyszukiwanie (email / company)
-- paginacja wyników
+### 🧠 Pipeline
 
-## 📊 Dashboard
-- liczba leadów
-- liczba zamkniętych leadów
-- conversion rate
-- wykresy (Recharts)
+-   Kanban board (drag & drop)
+-   Statusy:
+    -   NEW
+    -   CONTACTED
+    -   QUALIFIED
+    -   WON
+    -   LOST
 
-## ⚡ Generowanie leadów
-- endpoint generujący mock dane
-- zapis do bazy danych
+------------------------------------------------------------------------
 
----
+### 📊 Dashboard
 
-# 🏗️ Architektura backendu
+-   liczba leadów
+-   conversion rate (WON / ALL)
+-   liczba WON / LOST
+-   wykresy (per dzień / status)
 
-```
-backend/
-├── app/
-│   ├── main.py
-│   ├── api/
-│   ├── core/
-│   ├── models/
-│   ├── schemas/
-│   ├── services/
-│   ├── repositories/
-│   └── tests/
-```
+------------------------------------------------------------------------
 
----
+### 📝 Notes / Activity
 
-# 🧪 Testy
+-   notatki do leada
+-   status history (lead timeline)
 
-## Zakres:
-- testy unitowe (services)
-- testy API (endpointy)
+------------------------------------------------------------------------
 
-## Narzędzia:
-- pytest
-- httpx
+## 🧱 2. ARCHITEKTURA (Vertical Slice)
 
----
+    app/
+      features/
+        auth/
+        leads/
+        analytics/
 
-# 🐳 Docker
+      core/
+      db/
 
-- backend (FastAPI)
-- frontend (Next.js)
-- database (PostgreSQL)
+------------------------------------------------------------------------
 
-Uruchomienie:
-```
-docker-compose up --build
-```
+## ⚙️ 3. STACK
 
----
+### Backend
 
-# ☁️ Deployment
+-   FastAPI
+-   SQLAlchemy
+-   PostgreSQL
+-   Alembic
+-   Pydantic v2
 
-- Backend: Railway
-- Frontend: Vercel
-- Database: PostgreSQL (Railway / Supabase)
+### Frontend
 
----
+-   Next.js (App Router)
+-   TypeScript
+-   Tailwind
+-   TanStack Query
 
-# 📄 README powinno zawierać
+### 📊 Wizualizacje
 
-- opis projektu
-- stack technologiczny
-- instrukcję uruchomienia
-- link do live demo
-- screenshoty aplikacji
+-   Recharts
 
----
+------------------------------------------------------------------------
 
-# 🎯 Definition of Done
+## 🔁 4. FLOW
 
-Projekt jest gotowy gdy:
+### 🔐 Auth
 
-- działa online (live URL)
-- można się zarejestrować i zalogować
-- można dodawać i zarządzać leadami
-- działa filtrowanie i dashboard
-- są testy
-- działa docker
-- jest README
+1.  register
+2.  login → JWT
+3.  refresh token flow
+4.  authenticated requests
 
----
+### 📇 Leads
 
-# ⏱️ Plan realizacji
+1.  create → NEW
+2.  move in pipeline
+3.  update status
+4.  soft delete
 
-## Tydzień 1
-- setup backendu
-- modele + baza danych
+### 📊 Dashboard
 
-## Tydzień 2
-- auth + CRUD API
+1.  `/analytics`
+2.  backend computes metrics
+3.  frontend renders charts
 
-## Tydzień 3
-- frontend (Next.js)
-- integracja API
+------------------------------------------------------------------------
 
-## Tydzień 4
-- testy
-- docker
-- deploy
+## 📅 5. PLAN 7 DNI
 
----
+-   **D1:** setup + auth\
+-   **D2:** CRUD leads\
+-   **D3:** Kanban\
+-   **D4:** Dashboard\
+-   **D5:** Notes + UX\
+-   **D6:** README + polish\
+-   **D7:** Deploy
 
-# 💡 Cel projektu
+------------------------------------------------------------------------
 
-Celem projektu jest stworzenie aplikacji, która:
+## 💎 6. DODATKI (ważne)
 
-- wygląda jak realny produkt SaaS
-- pokazuje umiejętności fullstack (React + Python)
-- pozwala aplikować na stanowiska Fullstack / Backend Python
+-   pagination + filtering (backend)
+-   backend search (ILIKE)
+-   error handling (global handler)
+-   loading states
+-   optimistic UI (TanStack Query)
+-   validation (Pydantic + Zod)
+-   API client layer
+-   env config (.env)
+-   logging (requests + errors)
+-   basic tests (auth + leads)
+
+------------------------------------------------------------------------
+
+## 🧠 7. ARCHITEKTURA API (konwencja)
+
+    GET    /leads
+    POST   /leads
+    PATCH  /leads/{id}
+    DELETE /leads/{id}
+
+    POST   /auth/login
+    POST   /auth/register
+    POST   /auth/refresh
+
+------------------------------------------------------------------------
+
+## ✨ 8. UX / QUALITY
+
+-   skeleton loaders
+-   disabled buttons on submit
+-   toasts (success/error)
+-   empty states
+-   default sorting (newest first)
+
+------------------------------------------------------------------------
+
+## 🚀 9. DEPLOY
+
+-   Backend: Railway / Render
+-   Frontend: Vercel
+-   demo account (optional)
+
+------------------------------------------------------------------------
+
+## 🏆 10. CEL PROJEKTU
+
+Projekt portfolio pokazujący: - fullstack development (FastAPI +
+Next.js) - clean architecture (Vertical Slice) - real-world features
+(auth, pipeline, analytics) - nowoczesny frontend (TanStack Query,
+charts)

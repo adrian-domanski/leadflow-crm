@@ -1,9 +1,10 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from app.api.leads import router as leads_router
 from app.db.session import engine
 from app.db.base import Base
+
+from app.features.leads.router import router as leads_router
 
 
 @asynccontextmanager
