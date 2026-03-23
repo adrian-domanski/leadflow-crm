@@ -1,13 +1,12 @@
+
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 from . import schemas, models
 
 
-def create(db: Session, data: schemas.LeadCreate):
-    lead = models.Lead(
-        email=data.email,
-        status=data.status,
-        company=data.company
-    )
+def create(db: Session, lead: schemas.LeadCreate):
+ 
 
     db.add(lead)
     db.commit()
@@ -16,31 +15,22 @@ def create(db: Session, data: schemas.LeadCreate):
     return lead
 
 
-def get_all(db: Session):
-    return db.query(models.Lead).all()
+def get_all(db: Session, user_id: int):
+    return db.query(models.Lead).filter(models.Lead.owner_id == user_id).all()
 
 def get_by_id(db: Session, lead_id: int):
     return db.query(models.Lead).filter(models.Lead.id == lead_id).first()
 
-def delete(db: Session, lead_id: int):
-    lead = get_by_id(db, lead_id)
-    if lead:
-        db.delete(lead)
-        db.commit()
-        return True
-    return False
+def delete(db: Session, lead: models.Lead):
+    db.delete(lead)
+    db.commit()
+    return True
 
-def update(db: Session, lead_id: int, payload: schemas.LeadUpdate):
-    lead = db.query(models.Lead).filter(models.Lead.id == lead_id).first()
+def update(db: Session, lead: models.Lead, payload: schemas.LeadUpdate):
+    for field, value in payload.dict(exclude_unset=True).items():
+        setattr(lead, field, value)
 
-    if not lead:
-        return None
-
-    if payload.status is not None:
-        lead.status = payload.status
-
-    if payload.company is not None:
-        lead.company = payload.company
+    lead.updated_at = datetime.utcnow()
 
     db.commit()
     db.refresh(lead)

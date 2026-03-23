@@ -17,25 +17,25 @@ def get_db():
 
 
 @router.post("/")
-def create_lead(data: schemas.LeadCreate, db: Session = Depends(get_db)):
-    return service.create_lead(db, data)
+def create_lead(data: schemas.LeadCreate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return service.create_lead(db, data, current_user.id)
 
 
 @router.get("/")
-def get_leads(db: Session = Depends(get_db)):
-    return service.get_leads(db)
+def get_leads(db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return service.get_leads(db, current_user.id)
 
 @router.get("/{lead_id}")
-def get_lead(lead_id: int, db: Session = Depends(get_db)):
-    return service.get_lead(db, lead_id)
+def get_lead(lead_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return service.get_lead(db, lead_id, current_user.id)
 
 @router.delete("/{lead_id}")
-def delete_lead(lead_id: int, db: Session = Depends(get_db)):
-    return service.delete_lead(db, lead_id)
+def delete_lead(lead_id: int, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    return service.delete_lead(db, lead_id, current_user.id)
 
 @router.patch("/{lead_id}")
-def update_lead(lead_id: int, payload: schemas.LeadUpdate, db: Session = Depends(get_db)):
-    updated = service.update_lead(db, lead_id, payload)
+def update_lead(lead_id: int, payload: schemas.LeadUpdate, db: Session = Depends(get_db), current_user = Depends(get_current_user)):
+    updated = service.update_lead(db, lead_id, payload, current_user.id) 
     if not updated:
         raise HTTPException(status_code=404, detail="Lead not found")
 
