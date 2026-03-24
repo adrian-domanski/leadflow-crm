@@ -6,6 +6,7 @@ import { initAuth } from '@/shared/lib/auth';
 import { Geist } from 'next/font/google';
 import { cn } from '@/shared/lib/utils';
 import ToasterProvider from '@/shared/components/ToasterProvider';
+import { Providers } from './providers';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -21,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang='en' className={cn('font-sans', geist.variable)}>
       <body>
-        {children}
+        <Providers>{children}</Providers>
         <ToasterProvider />
       </body>
     </html>

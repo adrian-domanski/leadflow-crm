@@ -1,42 +1,39 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { api } from '@/shared/lib/api';
-import Layout from '@/shared/components/Layout';
+import { useLeads } from '@/features/leads/hooks';
+import LeadsTable from '@/features/leads/table/LeadsTable';
+import CreateLeadDialog from '@/features/leads/components/CreateLeadDialog';
+import { deleteLead } from '@/features/leads/api';
+import { toast } from 'sonner';
 
 export default function LeadsPage() {
-  const [leads, setLeads] = useState<any[]>([]);
+  const { data: leads, isLoading: loading, refetch } = useLeads();
 
-  const fetchLeads = async () => {
+  const handleDelete = async (id: string) => {
+    const confirmed = confirm('Are you sure you want to delete this lead?');
+    if (!confirmed) return;
+
     try {
-      const res = await api.get('/leads');
-      setLeads(res.data);
+      await deleteLead(id);
+      toast.success('Lead deleted');
+      refetch();
     } catch (err) {
-      console.error(err);
+      toast.error('Failed to delete lead');
     }
   };
 
-  useEffect(() => {
-    fetchLeads();
-  }, []);
-
   return (
-    <div>
-      <h1>Leads</h1>
+    <div className='space-y-6'>
+      <div className='flex items-center justify-between'>
+        <h1 className='text-2xl font-semibold'>Leads</h1>
+        <CreateLeadDialog onCreated={refetch} />
+      </div>
 
-      {leads.map((lead) => (
-        <div
-          key={lead.id}
-          style={{
-            padding: 10,
-            border: '1px solid #ccc',
-            marginTop: 10,
-          }}
-        >
-          <div>{lead.name}</div>
-          <div>{lead.email}</div>
-        </div>
-      ))}
+      {loading ? (
+        <div>Loading...</div>
+      ) : (
+        <LeadsTable leads={leads} onDelete={handleDelete} />
+      )}
     </div>
   );
 }

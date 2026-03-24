@@ -1,27 +1,44 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getLeads } from './api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deleteLead, getLeads } from './api';
 import { Lead } from './types';
 
 export const useLeads = () => {
-  const [leads, setLeads] = useState<Lead[]>([]);
-  const [loading, setLoading] = useState(true);
+  return useQuery<Lead[]>({
+    queryKey: ['leads'],
+    queryFn: getLeads,
+    staleTime: 1000 * 60,
+    refetchOnWindowFocus: false,
+  });
+};
 
-  const fetchLeads = async () => {
-    try {
-      const data = await getLeads();
-      setLeads(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+export const useDeleteLead = () => {
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchLeads();
-  }, []);
+  return useMutation({
+    mutationFn: deleteLead,
 
-  return { leads, loading };
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: ['leads'] });
+
+      const previousLeads = queryClient.getQueryData<Lead[]>(['leads']);
+
+      queryClient.setQueryData<Lead[]>(['leads'], (old) =>
+        old ? old.filter((lead) => lead.id !== String(id)) : [],
+      );
+
+      return { previousLeads };
+    },
+
+    onError: (err, id, context) => {
+      if (context?.previousLeads) {
+        queryClient.setQueryData(['leads'], context.previousLeads);
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+    },
+  });
 };
