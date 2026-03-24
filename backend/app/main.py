@@ -1,11 +1,12 @@
-from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-from app.db.session import engine
-from app.db.base import Base
+from fastapi import FastAPI
 
-from app.features.leads.router import router as leads_router
+from app.core.handlers import register_exception_handlers
+from app.db.base import Base
+from app.db.session import engine
 from app.features.auth.router import router as auth_router
+from app.features.leads.router import router as leads_router
 
 
 @asynccontextmanager
@@ -18,6 +19,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan, swagger_ui_parameters={"persistAuthorization": True})
 
+register_exception_handlers(app)
 
 @app.get("/")
 def root():
@@ -26,3 +28,5 @@ def root():
 
 app.include_router(leads_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
+
+

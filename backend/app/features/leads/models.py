@@ -1,6 +1,9 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey
 from datetime import datetime
+
+from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String
+
 from app.db.base import Base
+
 
 class Lead(Base):
     __tablename__ = "leads"
@@ -18,3 +21,4 @@ class Lead(Base):
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, nullable=True)
+    is_deleted = Column(Boolean, default=False, index=True)

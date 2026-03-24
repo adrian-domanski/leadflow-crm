@@ -1,0 +1,17 @@
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+exclude = '''
+/(
+    migrations
+  | venv
+)/
+'''
+
+[tool.ruff]
+line-length = 100
+select = ["E", "F", "I"]  # errors, flakes, imports
+fix = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]

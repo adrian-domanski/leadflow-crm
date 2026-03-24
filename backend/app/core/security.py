@@ -1,6 +1,8 @@
-import bcrypt
 from datetime import datetime, timedelta
+
+import bcrypt
 from jose import jwt
+
 from app.core.config import settings
 
 ALGORITHM = "HS256"

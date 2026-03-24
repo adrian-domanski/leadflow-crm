@@ -1,12 +1,7 @@
-from enum import Enum
 from pydantic import BaseModel, EmailStr, Field
 
+from app.features.leads.enums import LeadStatus
 
-class LeadStatus(str, Enum):
-    NEW = "new"
-    CONTACTED = "contacted"
-    QUALIFIED = "qualified"
-    LOST = "lost"
 
 class LeadCreate(BaseModel):
     email: EmailStr
@@ -16,3 +11,7 @@ class LeadCreate(BaseModel):
 class LeadUpdate(BaseModel):
     status: LeadStatus | None = Field(None)
     company: str | None = Field(None,min_length=2, max_length=100)
+    name: str | None = Field(None, min_length=2, max_length=100)
+
+class LeadStatusUpdate(BaseModel):
+    status: LeadStatus

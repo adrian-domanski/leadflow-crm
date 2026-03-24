@@ -1,7 +1,13 @@
 {
+ "editor.formatOnSave": true,
+  "editor.defaultFormatter": "ms-python.black-formatter",
+  "editor.codeActionsOnSave": {
+    "source.fixAll.ruff": "explicit"
+  },
   "editor.renderWhitespace": "all",
   "editor.insertSpaces": false,
   "files.exclude": {
     "**/__pycache__": true
-  }
+  },
+  "makefile.configureOnOpen": false
 }
