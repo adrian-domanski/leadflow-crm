@@ -1,12 +1,17 @@
 from sqlalchemy.orm import Session
 
-from app.core.exceptions import NotFoundException
+from app.core.exceptions import ConflictException, NotFoundException
 from app.features.leads.enums import LeadStatus
 
 from . import models, repository, schemas
 
 
 def create_lead(db: Session, data: schemas.LeadCreate, user_id: int):
+    existing = repository.get_by_email(db, data.email, user_id)
+
+    if existing:
+        raise ConflictException("Lead with this email already exists")
+
     lead = models.Lead(
         name=data.name,
         owner_id=user_id,
@@ -19,10 +24,16 @@ def create_lead(db: Session, data: schemas.LeadCreate, user_id: int):
 
 
 def get_leads(
-    db: Session, user_id: int, status: LeadStatus | None, search: str | None, page: int, limit: int
+    db: Session,
+    user_id: int,
+    status: LeadStatus | None,
+    search: str | None,
+    sort: str | None,
+    page: int,
+    limit: int,
 ):
     return repository.get_all(
-        db, user_id=user_id, status=status, search=search, page=page, limit=limit
+        db, user_id=user_id, status=status, search=search, sort=sort, page=page, limit=limit
     )
 
 

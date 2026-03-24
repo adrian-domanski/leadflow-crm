@@ -5,6 +5,8 @@ from fastapi import FastAPI
 from app.core.handlers import register_exception_handlers
 from app.db.base import Base
 from app.db.session import engine
+
+from app.features.analytics.router import router as analytics_router
 from app.features.auth.router import router as auth_router
 from app.features.leads.router import router as leads_router
 
@@ -21,6 +23,7 @@ app = FastAPI(lifespan=lifespan, swagger_ui_parameters={"persistAuthorization": 
 
 register_exception_handlers(app)
 
+
 @app.get("/")
 def root():
     return {"message": "LeadFlow API is running!"}
@@ -28,5 +31,4 @@ def root():
 
 app.include_router(leads_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
-
-
+app.include_router(analytics_router, prefix="/api")

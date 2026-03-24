@@ -9,3 +9,7 @@ class NotFoundException(AppException):
 
 class ForbiddenException(AppException):
     pass
+
+
+class ConflictException(AppException):
+    pass

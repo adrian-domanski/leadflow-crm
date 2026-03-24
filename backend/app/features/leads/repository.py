@@ -1,8 +1,8 @@
 from datetime import datetime
-
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from app.features.leads import models, schemas
+from app.features.leads.models import Lead
+from app.features.leads import schemas
 
 
 def create(db: Session, lead: schemas.LeadCreate):
@@ -14,41 +14,47 @@ def create(db: Session, lead: schemas.LeadCreate):
     return lead
 
 
-def get_all(db, user_id, status=None, search=None, page=1, limit=20):
-    query = db.query(models.Lead).filter(
-        models.Lead.owner_id == user_id, models.Lead.is_deleted == False
-    )
+def get_all(db, user_id, status=None, search=None, sort=None, page=1, limit=20):
+    query = db.query(Lead).filter(Lead.owner_id == user_id, Lead.is_deleted == False)
 
+    # 🔍 filtering
     if status:
-        query = query.filter(models.Lead.status == status)
+        query = query.filter(Lead.status == status)
 
     if search:
-        search_term = f"%{search}%"
+        term = f"%{search}%"
         query = query.filter(
-            or_(
-                models.Lead.email.ilike(search_term),
-                models.Lead.name.ilike(search_term),
-                models.Lead.company.ilike(search_term),
-            )
+            or_(Lead.email.ilike(term), Lead.name.ilike(term), Lead.company.ilike(term))
         )
 
-    # pagination
+    # 🔽 sorting
+    if sort == "created_at_desc":
+        query = query.order_by(Lead.created_at.desc())
+    elif sort == "created_at_asc":
+        query = query.order_by(Lead.created_at.asc())
+    else:
+        query = query.order_by(Lead.created_at.desc())  # default
+
+    # 📄 pagination (safe)
+    page = max(page, 1)
+    limit = min(max(limit, 1), 100)
+
     offset = (page - 1) * limit
 
     return query.offset(offset).limit(limit).all()
 
 
 def get_by_id(db: Session, lead_id: int):
-    return db.query(models.Lead).filter(models.Lead.id == lead_id).first()
+    return db.query(Lead).filter(Lead.id == lead_id).first()
 
 
-def delete(db: Session, lead: models.Lead):
+def delete(db: Session, lead: Lead):
     lead.is_deleted = True
     db.commit()
     return True
 
 
-def update(db: Session, lead: models.Lead, payload: schemas.LeadUpdate):
+def update(db: Session, lead: Lead, payload: schemas.LeadUpdate):
     for field, value in payload.dict(exclude_unset=True).items():
         setattr(lead, field, value)
 
@@ -60,7 +66,7 @@ def update(db: Session, lead: models.Lead, payload: schemas.LeadUpdate):
     return lead
 
 
-def save(db: Session, lead: models.Lead):
+def save(db: Session, lead: Lead):
     lead.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(lead)

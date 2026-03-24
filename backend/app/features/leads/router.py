@@ -2,20 +2,12 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.dependencies import get_current_user
-from app.db.session import SessionLocal
+from app.db.session import get_db
 from app.features.leads.enums import LeadStatus
 
 from . import schemas, service
 
 router = APIRouter(prefix="/leads", tags=["leads"], dependencies=[Depends(get_current_user)])
-
-
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 @router.post("/")
@@ -29,13 +21,14 @@ def create_lead(
 def get_leads(
     status: LeadStatus | None = None,
     search: str | None = None,
+    sort: str | None = None,
     page: int = 1,
     limit: int = 10,
     db: Session = Depends(get_db),
     current_user=Depends(get_current_user),
 ):
     return service.get_leads(
-        db, user_id=current_user.id, status=status, search=search, page=page, limit=limit
+        db, user_id=current_user.id, status=status, search=search, sort=sort, page=page, limit=limit
     )
 
 
