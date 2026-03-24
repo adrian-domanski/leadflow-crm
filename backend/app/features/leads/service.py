@@ -7,7 +7,7 @@ from . import models, repository, schemas
 
 
 def create_lead(db: Session, data: schemas.LeadCreate, user_id: int):
-    existing = repository.get_by_email(db, data.email, user_id)
+    existing = repository.get_by_email(db, data.email)
 
     if existing:
         raise ConflictException("Lead with this email already exists")

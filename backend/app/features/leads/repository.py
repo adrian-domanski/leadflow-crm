@@ -27,15 +27,13 @@ def get_all(db, user_id, status=None, search=None, sort=None, page=1, limit=20):
             or_(Lead.email.ilike(term), Lead.name.ilike(term), Lead.company.ilike(term))
         )
 
-    # 🔽 sorting
     if sort == "created_at_desc":
         query = query.order_by(Lead.created_at.desc())
     elif sort == "created_at_asc":
         query = query.order_by(Lead.created_at.asc())
     else:
-        query = query.order_by(Lead.created_at.desc())  # default
+        query = query.order_by(Lead.created_at.desc())
 
-    # 📄 pagination (safe)
     page = max(page, 1)
     limit = min(max(limit, 1), 100)
 
@@ -46,6 +44,10 @@ def get_all(db, user_id, status=None, search=None, sort=None, page=1, limit=20):
 
 def get_by_id(db: Session, lead_id: int):
     return db.query(Lead).filter(Lead.id == lead_id).first()
+
+
+def get_by_email(db: Session, email: str):
+    return db.query(Lead).filter(Lead.email == email).first()
 
 
 def delete(db: Session, lead: Lead):
