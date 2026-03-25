@@ -13,6 +13,11 @@ export const deleteLead = async (id: string): Promise<void> => {
   await api.delete(`/leads/${id}`);
 };
 
+export async function updateLead(id: string, data: Partial<Lead>) {
+  const res = await api.put(`/leads/${id}`, data);
+  return res.data;
+}
+
 export async function getLeads(
   search?: string,
   status?: string,

@@ -11,6 +11,7 @@ import {
   TableBody,
   TableCell,
 } from '@/shared/components/ui/table';
+import LeadDialog from '../components/LeadDialog';
 
 type Props = {
   leads?: Lead[];
@@ -35,7 +36,9 @@ export default function LeadsTable({
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Email</TableHead>
+            <TableHead>Company</TableHead>
             <TableHead>Status</TableHead>
+
             <TableHead className='text-right'>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -50,7 +53,7 @@ export default function LeadsTable({
                 colSpan={4}
                 className='text-center py-10 text-muted-foreground'
               >
-                No leads yet. Click "Add Lead" to get started.
+                No leads yet. Click {'"'}Add Lead{'"'} to get started.
               </TableCell>
             </TableRow>
           )}
@@ -60,12 +63,14 @@ export default function LeadsTable({
               <TableRow key={lead.id} className='hover:bg-muted/50 transition'>
                 <TableCell>{lead.name}</TableCell>
                 <TableCell>{lead.email}</TableCell>
+                <TableCell>{lead.company}</TableCell>
 
                 <TableCell>
                   <StatusBadge status={lead.status} />
                 </TableCell>
 
                 <TableCell className='text-right'>
+                  <LeadDialog mode='edit' lead={lead} />
                   <Button
                     variant='destructive'
                     size='sm'

@@ -1,8 +1,8 @@
 'use client';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { deleteLead, getLeads } from './api';
-import { Lead } from './types';
+import { createLead, deleteLead, getLeads, updateLead } from './api';
+import { CreateLeadDto, Lead, UpdateLeadDto } from './types';
 
 export function useLeads(search?: string, status?: string, page = 1) {
   return useQuery({
@@ -41,3 +41,27 @@ export const useDeleteLead = () => {
     },
   });
 };
+
+export function useCreateLead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateLeadDto) => createLead(data),
+
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+    },
+  });
+}
+
+export function useUpdateLead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateLeadDto }) =>
+      updateLead(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+    },
+  });
+}

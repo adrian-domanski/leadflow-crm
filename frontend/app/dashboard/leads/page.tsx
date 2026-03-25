@@ -4,12 +4,13 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import LeadsTable from '@/features/leads/table/LeadsTable';
-import CreateLeadDialog from '@/features/leads/components/CreateLeadDialog';
+import LeadDialog from '@/features/leads/components/LeadDialog';
 import { deleteLead } from '@/features/leads/api';
 import { toast } from 'sonner';
 import { useLeads } from '@/features/leads/hooks';
 import { Input } from '@/shared/components/ui/input';
 import { useDebounce } from '@/shared/lib/useDebounce';
+import { Lead } from '@/features/leads/types';
 
 export default function LeadsPage() {
   const router = useRouter();
@@ -72,7 +73,7 @@ export default function LeadsPage() {
     <div className='space-y-6'>
       <div className='flex items-center justify-between'>
         <h1 className='text-2xl font-semibold'>Leads</h1>
-        <CreateLeadDialog onCreated={refetch} />
+        <LeadDialog onSuccess={refetch} />
       </div>
 
       <div className='flex items-center gap-4'>
@@ -96,7 +97,7 @@ export default function LeadsPage() {
       </div>
 
       <LeadsTable
-        leads={leads}
+        leads={leads as Lead[]}
         isLoading={isLoading}
         onDelete={handleDelete}
         deletingId={deletingId}
