@@ -14,7 +14,7 @@ export const deleteLead = async (id: string): Promise<void> => {
 };
 
 export async function updateLead(id: string, data: Partial<Lead>) {
-  const res = await api.put(`/leads/${id}`, data);
+  const res = await api.patch(`/leads/${id}`, data);
   return res.data;
 }
 
