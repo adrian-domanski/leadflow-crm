@@ -12,7 +12,7 @@ class Lead(Base):
 
     name = Column(String, nullable=False)
     email = Column(String, nullable=False, index=True)
-    company = Column(String, nullable=True)
+    company = Column(String, nullable=False)
 
     status = Column(String, default="new", index=True)
     value = Column(Float, nullable=True)
