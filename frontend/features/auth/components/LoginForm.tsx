@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
-import { api } from '@/shared/lib/api';
 import { login } from '@/shared/lib/auth';
 
 import {
@@ -16,6 +14,7 @@ import { Input } from '@/shared/components/ui/input';
 import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
 import { toast } from 'sonner';
+import { getErrorMessage } from '@/shared/lib/error';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -28,18 +27,13 @@ export default function LoginForm() {
     try {
       setLoading(true);
 
-      const res = await api.post('/auth/login', {
-        email,
-        password,
-      });
-
-      login(res.data.access_token, res.data.refresh_token);
+      await login(email, password);
 
       toast.success('Welcome back 👋');
 
       router.replace('/dashboard');
-    } catch (err: any) {
-      toast.error(err?.response?.data?.detail || 'Login failed');
+    } catch (err) {
+      toast.error(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -50,7 +44,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className='min-h-screen flex items-center justify-center px-4'>
+    <div className='min-h-screen bg-accent flex items-center justify-center px-4'>
       {/* CARD */}
       <Card className='w-full max-w-sm shadow-lg'>
         <CardHeader className='space-y-1'>

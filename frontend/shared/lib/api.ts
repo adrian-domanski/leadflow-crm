@@ -1,4 +1,3 @@
-// lib/api.ts
 import axios from 'axios';
 
 const API_URL = 'http://localhost:8000/api';
@@ -24,13 +23,17 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// response interceptor (refresh token)
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
     const originalRequest = error.config;
+    const status = error.response?.status;
+    const url = originalRequest?.url || '';
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isAuthEndpoint =
+      url.includes('/auth/login') || url.includes('/auth/refresh');
+
+    if (status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       originalRequest._retry = true;
 
       try {
@@ -51,7 +54,10 @@ api.interceptors.response.use(
       } catch (err) {
         console.error('Refresh failed');
         localStorage.clear();
-        window.location.href = '/login';
+
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
       }
     }
 
