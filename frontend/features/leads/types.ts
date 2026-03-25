@@ -7,3 +7,10 @@ export interface Lead {
   status: LeadStatus;
   created_at?: string;
 }
+
+export type LeadsResponse = {
+  data: Lead[];
+  total: number;
+  page: number;
+  limit: number;
+};

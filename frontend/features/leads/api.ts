@@ -1,5 +1,5 @@
 import { api } from '@/shared/lib/api';
-import { Lead } from './types';
+import { Lead, LeadsResponse } from './types';
 
 export const createLead = async (data: {
   name: string;
@@ -13,7 +13,15 @@ export const deleteLead = async (id: string): Promise<void> => {
   await api.delete(`/leads/${id}`);
 };
 
-export const getLeads = async (): Promise<Lead[]> => {
-  const res = await api.get('/leads');
+export async function getLeads(
+  search?: string,
+  status?: string,
+  page = 1,
+  limit = 10,
+): Promise<LeadsResponse> {
+  const res = await api.get('/leads', {
+    params: { search, status, page, limit },
+  });
+
   return res.data;
-};
+}

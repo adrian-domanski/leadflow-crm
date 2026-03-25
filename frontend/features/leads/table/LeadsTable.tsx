@@ -1,7 +1,6 @@
 'use client';
 
 import { Lead } from '../types';
-import { useDeleteLead } from '../hooks';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -14,15 +13,20 @@ import {
 } from '@/shared/components/ui/table';
 
 type Props = {
-  leads: Lead[];
+  leads?: Lead[];
   isLoading?: boolean;
+  onDelete?: (id: string) => void;
+  deletingId?: string | null;
 };
 
-export default function LeadsTable({ leads, isLoading }: Props) {
-  const { mutate: deleteLead, isPending } = useDeleteLead();
-
+export default function LeadsTable({
+  leads,
+  isLoading,
+  onDelete,
+  deletingId,
+}: Props) {
   const showSkeleton = isLoading;
-  const showEmpty = !isLoading && leads.length === 0;
+  const showEmpty = !isLoading && (!leads || leads.length === 0);
 
   return (
     <div className='border rounded-xl overflow-hidden'>
@@ -37,11 +41,9 @@ export default function LeadsTable({ leads, isLoading }: Props) {
         </TableHeader>
 
         <TableBody>
-          {/* 🔄 LOADING */}
           {showSkeleton &&
             Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)}
 
-          {/* 📭 EMPTY */}
           {showEmpty && (
             <TableRow>
               <TableCell
@@ -53,10 +55,9 @@ export default function LeadsTable({ leads, isLoading }: Props) {
             </TableRow>
           )}
 
-          {/* ✅ DATA */}
           {!showSkeleton &&
-            leads.map((lead) => (
-              <TableRow key={lead.id}>
+            leads?.map((lead) => (
+              <TableRow key={lead.id} className='hover:bg-muted/50 transition'>
                 <TableCell>{lead.name}</TableCell>
                 <TableCell>{lead.email}</TableCell>
 
@@ -68,15 +69,10 @@ export default function LeadsTable({ leads, isLoading }: Props) {
                   <Button
                     variant='destructive'
                     size='sm'
-                    disabled={isPending}
-                    onClick={() => {
-                      const confirmed = confirm(`Delete lead "${lead.name}"?`);
-                      if (!confirmed) return;
-
-                      deleteLead(lead.id);
-                    }}
+                    disabled={deletingId === lead.id}
+                    onClick={() => onDelete?.(lead.id)}
                   >
-                    {isPending ? 'Deleting...' : 'Delete'}
+                    {deletingId === lead.id ? 'Deleting...' : 'Delete'}
                   </Button>
                 </TableCell>
               </TableRow>
@@ -107,11 +103,11 @@ function SkeletonRow() {
 }
 
 function StatusBadge({ status }: { status: Lead['status'] }) {
-  const map: Record<Lead['status'], 'default' | 'secondary' | 'outline'> = {
-    new: 'default',
-    contacted: 'secondary',
-    won: 'outline',
-  };
+  const config = {
+    new: { label: 'New', variant: 'default' },
+    contacted: { label: 'Contacted', variant: 'secondary' },
+    won: { label: 'Won', variant: 'outline' },
+  } as const;
 
-  return <Badge variant={map[status]}>{status}</Badge>;
+  return <Badge variant={config[status].variant}>{config[status].label}</Badge>;
 }

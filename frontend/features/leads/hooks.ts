@@ -4,14 +4,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteLead, getLeads } from './api';
 import { Lead } from './types';
 
-export const useLeads = () => {
-  return useQuery<Lead[]>({
-    queryKey: ['leads'],
-    queryFn: getLeads,
-    staleTime: 1000 * 60,
-    refetchOnWindowFocus: false,
+export function useLeads(search?: string, status?: string, page = 1) {
+  return useQuery({
+    queryKey: ['leads', search ?? '', status ?? 'all', page],
+    queryFn: () => getLeads(search, status, page),
+    placeholderData: (prev) => prev,
   });
-};
+}
 
 export const useDeleteLead = () => {
   const queryClient = useQueryClient();

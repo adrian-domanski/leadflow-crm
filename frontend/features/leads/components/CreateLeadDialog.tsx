@@ -49,9 +49,9 @@ export default function CreateLeadDialog({ onCreated }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger>
-        <Button>Add Lead</Button>
-      </DialogTrigger>
+      <DialogTrigger
+        render={(attrs) => <Button {...attrs}>Add Lead</Button>}
+      ></DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
