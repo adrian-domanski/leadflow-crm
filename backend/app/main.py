@@ -1,10 +1,10 @@
+import os
 from contextlib import asynccontextmanager
-
 from fastapi import FastAPI
-
 from app.core.handlers import register_exception_handlers
 from app.db.base import Base
-from app.db.session import engine
+from app.db.seed import run_seed
+from app.db.session import SessionLocal, engine
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.features.analytics.router import router as analytics_router
@@ -16,7 +16,16 @@ from app.features.leads.router import router as leads_router
 async def lifespan(app: FastAPI):
     print("🚀 Starting app...")
     Base.metadata.create_all(bind=engine)
+
+    db = SessionLocal()
+    try:
+        if os.getenv("SEED_DATA") == "true":
+            run_seed(db)
+    finally:
+        db.close()
+
     yield
+
     print("Shutting down...")
 
 
@@ -24,9 +33,7 @@ app = FastAPI(lifespan=lifespan, swagger_ui_parameters={"persistAuthorization": 
 
 register_exception_handlers(app)
 
-origins = [
-    "http://localhost:3000",
-]
+origins = ["http://localhost:3000", os.getenv("CLIENT_URL")]
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,7 +46,7 @@ app.add_middleware(
 
 @app.get("/")
 def root():
-    return {"message": "LeadFlow API is running!"}
+    return {"status": "ok"}
 
 
 app.include_router(leads_router, prefix="/api")

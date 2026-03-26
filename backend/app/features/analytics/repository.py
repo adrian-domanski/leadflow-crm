@@ -1,6 +1,5 @@
 from sqlalchemy import func, case
 from sqlalchemy.orm import Session
-from datetime import date
 
 from app.features.leads.models import Lead
 from app.features.leads.enums import LeadStatus

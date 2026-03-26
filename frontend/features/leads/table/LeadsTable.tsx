@@ -1,6 +1,6 @@
 'use client';
 
-import { Lead } from '../types';
+import { Lead, LeadStatus } from '../types';
 import { Badge } from '@/shared/components/ui/badge';
 import { Button } from '@/shared/components/ui/button';
 import {
@@ -12,6 +12,7 @@ import {
   TableCell,
 } from '@/shared/components/ui/table';
 import LeadDialog from '../components/LeadDialog';
+import { VariantProps } from 'class-variance-authority';
 
 type Props = {
   leads?: Lead[];
@@ -107,12 +108,23 @@ function SkeletonRow() {
   );
 }
 
-function StatusBadge({ status }: { status: Lead['status'] }) {
-  const config = {
-    new: { label: 'New', variant: 'default' },
-    contacted: { label: 'Contacted', variant: 'secondary' },
-    won: { label: 'Won', variant: 'outline' },
-  } as const;
+type BadgeVariant = VariantProps<typeof Badge>['variant'];
 
-  return <Badge variant={config[status].variant}>{config[status].label}</Badge>;
+interface ConfigVariant {
+  label: string;
+  variant: BadgeVariant;
+}
+
+const STATUS_CONFIG: Record<LeadStatus, ConfigVariant> = {
+  new: { label: 'New', variant: 'default' },
+  contacted: { label: 'Contacted', variant: 'secondary' },
+  qualified: { label: 'Qualified', variant: 'secondary' },
+  lost: { label: 'Lost', variant: 'destructive' },
+  won: { label: 'Won', variant: 'outline' },
+};
+
+function StatusBadge({ status }: { status: LeadStatus }) {
+  const config = STATUS_CONFIG[status];
+
+  return <Badge variant={config.variant}>{config.label}</Badge>;
 }

@@ -1,7 +1,7 @@
 from fastapi import Request
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-from pydantic.v1 import ValidationError
+from pydantic import ValidationError
 
 from app.core.exceptions import (
     AppException,

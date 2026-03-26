@@ -22,12 +22,13 @@ export default function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
 
-  const handleLogin = async () => {
+  const handleLogin = async (customEmail?: string, customPassword?: string) => {
     try {
       setLoading(true);
 
-      await login(email, password);
+      await login(customEmail ?? email, customPassword ?? password);
 
       toast.success('Welcome back 👋');
 
@@ -39,13 +40,35 @@ export default function LoginForm() {
     }
   };
 
+  const handleDemoLogin = async () => {
+    const demoEmail = 'example@example.com';
+    const demoPassword = 'Example!23';
+
+    try {
+      setDemoLoading(true);
+
+      // opcjonalnie ustawiamy w inputach (lepszy UX)
+      setEmail(demoEmail);
+      setPassword(demoPassword);
+
+      await login(demoEmail, demoPassword);
+
+      toast.success('Logged in as demo user 🚀');
+
+      router.replace('/dashboard');
+    } catch (err) {
+      toast.error(getErrorMessage(err));
+    } finally {
+      setDemoLoading(false);
+    }
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleLogin();
   };
 
   return (
     <div className='min-h-screen bg-accent flex items-center justify-center px-4'>
-      {/* CARD */}
       <Card className='w-full max-w-sm shadow-lg'>
         <CardHeader className='space-y-1'>
           <CardTitle className='text-2xl'>Welcome back</CardTitle>
@@ -78,9 +101,23 @@ export default function LoginForm() {
             />
           </div>
 
-          {/* BUTTON */}
-          <Button className='w-full' onClick={handleLogin} disabled={loading}>
+          {/* MAIN BUTTON */}
+          <Button
+            className='w-full'
+            onClick={() => handleLogin()}
+            disabled={loading || demoLoading}
+          >
             {loading ? 'Signing in...' : 'Sign in'}
+          </Button>
+
+          {/* DEMO BUTTON */}
+          <Button
+            variant='secondary'
+            className='w-full'
+            onClick={handleDemoLogin}
+            disabled={loading || demoLoading}
+          >
+            {demoLoading ? 'Loading demo...' : 'Try demo'}
           </Button>
 
           {/* LINK */}
