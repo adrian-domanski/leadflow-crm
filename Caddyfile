@@ -1,4 +1,4 @@
-leadflow.kodario.com, www.leadflow.kodario.com {
+leadcrm.kodario.com, www.leadcrm.kodario.com {
 
     handle /api/* {
         reverse_proxy backend:8000
