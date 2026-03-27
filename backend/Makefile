@@ -2,7 +2,7 @@ dev:
 	uvicorn app.main:app --reload
 
 up-db:
-	docker-compose -f docker-compose.dev.yml up db
+	docker-compose -f docker-compose.dev.yml up db -d
 
 up:
 	docker-compose -f docker-compose.dev.yml up

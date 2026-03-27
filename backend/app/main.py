@@ -15,7 +15,8 @@ from app.features.leads.router import router as leads_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("🚀 Starting app...")
-    Base.metadata.create_all(bind=engine)
+    if os.getenv("ENV") == "development":
+        Base.metadata.create_all(bind=engine)
 
     db = SessionLocal()
     try:
@@ -49,6 +50,6 @@ def root():
     return {"status": "ok"}
 
 
-app.include_router(leads_router, prefix="/api")
-app.include_router(auth_router, prefix="/api")
-app.include_router(analytics_router, prefix="/api")
+app.include_router(leads_router, prefix="")
+app.include_router(auth_router, prefix="")
+app.include_router(analytics_router, prefix="")

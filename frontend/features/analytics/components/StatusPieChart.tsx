@@ -16,7 +16,7 @@ const COLORS = {
 export default function StatusPieChart() {
   const { data, isLoading } = useStatusBreakdown();
 
-  const hasData = data && Object.values(data).some((v) => v > 0);
+  const hasData = data && Object.values(data).some((v: any) => v > 0);
 
   const chartData = hasData
     ? Object.entries(data!).map(([status, count]) => ({
@@ -26,7 +26,7 @@ export default function StatusPieChart() {
     : [{ status: 'empty', count: 1 }];
 
   const total = hasData
-    ? Object.values(data!).reduce((a, b) => a + Number(b), 0)
+    ? Object.values(data!).reduce((a: any, b: any) => a + Number(b), 0)
     : 0;
 
   if (isLoading) {
@@ -91,7 +91,7 @@ export default function StatusPieChart() {
         <div className='absolute inset-0 flex flex-col items-center justify-center pointer-events-none'>
           {hasData ? (
             <>
-              <p className='text-2xl font-semibold'>{total}</p>
+              <p className='text-2xl font-semibold'>{total as number}</p>
               <p className='text-xs text-muted-foreground'>Leads</p>
             </>
           ) : (
