@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+// const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 let accessToken: string | null = null;
 
@@ -9,7 +9,7 @@ export const setAuthToken = (token: string | null) => {
 };
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -39,7 +39,7 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem('refreshToken');
 
-        const res = await axios.post(`${API_URL}/auth/refresh`, {
+        const res = await api.post(`/auth/refresh`, {
           refresh_token: refreshToken,
         });
 
