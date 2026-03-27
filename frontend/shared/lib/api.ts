@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 let accessToken: string | null = null;
 
@@ -9,7 +9,7 @@ export const setAuthToken = (token: string | null) => {
 };
 
 export const api = axios.create({
-  baseURL: `${API_URL}/api`,
+  baseURL: `/api`,
   headers: {
     'Content-Type': 'application/json',
   },

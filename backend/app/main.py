@@ -30,7 +30,9 @@ async def lifespan(app: FastAPI):
     print("Shutting down...")
 
 
-app = FastAPI(lifespan=lifespan, swagger_ui_parameters={"persistAuthorization": True})
+app = FastAPI(
+    lifespan=lifespan, swagger_ui_parameters={"persistAuthorization": True}, redirect_slashes=False
+)
 
 register_exception_handlers(app)
 
