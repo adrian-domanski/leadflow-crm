@@ -50,6 +50,6 @@ def root():
     return {"status": "ok"}
 
 
-app.include_router(leads_router, prefix="/api/v1/")
-app.include_router(auth_router, prefix="/api/v1/")
-app.include_router(analytics_router, prefix="/api/v1/")
+app.include_router(leads_router, prefix="/api")
+app.include_router(auth_router, prefix="/api")
+app.include_router(analytics_router, prefix="/api")
