@@ -1,3 +1,5 @@
+'use client';
+
 import LeadsPageWrapper from '@/features/leads/components/LeadsPageWrapper';
 import { Suspense } from 'react';
 
