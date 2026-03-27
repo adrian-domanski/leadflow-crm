@@ -17,6 +17,23 @@ export const api = axios.create({
 
 // request interceptor
 api.interceptors.request.use((config) => {
+  // Mixed content problem on production - find better solution with Caddy and reverse proxy later
+  if (typeof window !== 'undefined') {
+    const isProd = window.location.protocol === 'https:';
+
+    if (isProd) {
+      // fix baseURL
+      if (config.baseURL?.startsWith('http://')) {
+        config.baseURL = config.baseURL.replace('http://', 'https://');
+      }
+
+      // fix full URL (jeśli ktoś gdzieś podał absolute URL)
+      if (typeof config.url === 'string' && config.url.startsWith('http://')) {
+        config.url = config.url.replace('http://', 'https://');
+      }
+    }
+  }
+
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
   }
