@@ -15,8 +15,6 @@ from app.features.leads.router import router as leads_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("🚀 Starting app...")
-    if os.getenv("ENV") == "development":
-        Base.metadata.create_all(bind=engine)
 
     db = SessionLocal()
     try:

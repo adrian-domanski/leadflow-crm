@@ -17,12 +17,12 @@ def register_user(db: Session, email: str, password: str):
     if existing:
         raise HTTPException(status_code=400, detail="Email already registered")
 
-    user = repository.create_user(
-        db,
-        email=email,
-        hashed_password=hashed
-    )
-    return user
+    user = repository.create_user(db, email=email, hashed_password=hashed)
+
+    access = create_access_token({"sub": str(user.id)})
+    refresh = create_refresh_token({"sub": str(user.id)})
+
+    return {"access_token": access, "refresh_token": refresh}
 
 
 def login_user(db: Session, email: str, password: str):
@@ -33,7 +33,4 @@ def login_user(db: Session, email: str, password: str):
     access = create_access_token({"sub": str(user.id)})
     refresh = create_refresh_token({"sub": str(user.id)})
 
-    return {
-        "access_token": access,
-        "refresh_token": refresh
-    }
+    return {"access_token": access, "refresh_token": refresh}
