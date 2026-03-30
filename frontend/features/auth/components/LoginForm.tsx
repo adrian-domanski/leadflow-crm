@@ -4,17 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { login } from '@/shared/lib/auth';
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/shared/components/ui/card';
 import { Input } from '@/shared/components/ui/input';
 import { Button } from '@/shared/components/ui/button';
 import { Label } from '@/shared/components/ui/label';
 import { toast } from 'sonner';
 import { getErrorMessage } from '@/shared/lib/error';
+import { AuthCard } from '@/features/auth/components/AuthCard';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -24,14 +19,13 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [demoLoading, setDemoLoading] = useState(false);
 
-  const handleLogin = async (customEmail?: string, customPassword?: string) => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
     try {
       setLoading(true);
-
-      await login(customEmail ?? email, customPassword ?? password);
-
+      await login(email, password);
       toast.success('Welcome back 👋');
-
       router.replace('/dashboard');
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -40,21 +34,19 @@ export default function LoginForm() {
     }
   };
 
-  const handleDemoLogin = async () => {
-    const demoEmail = 'example@example.com';
-    const demoPassword = 'Example!23';
-
+  const handleDemo = async () => {
     try {
       setDemoLoading(true);
 
-      // opcjonalnie ustawiamy w inputach (lepszy UX)
+      const demoEmail = 'example@example.com';
+      const demoPassword = 'Example!23';
+
       setEmail(demoEmail);
       setPassword(demoPassword);
 
       await login(demoEmail, demoPassword);
 
-      toast.success('Logged in as demo user 🚀');
-
+      toast.success('Logged in as demo 🚀');
       router.replace('/dashboard');
     } catch (err) {
       toast.error(getErrorMessage(err));
@@ -63,75 +55,57 @@ export default function LoginForm() {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') handleLogin();
-  };
-
   return (
-    <div className='min-h-screen bg-accent flex items-center justify-center px-4'>
-      <Card className='w-full max-w-sm shadow-lg'>
-        <CardHeader className='space-y-1'>
-          <CardTitle className='text-2xl'>Welcome back</CardTitle>
-          <p className='text-sm text-muted-foreground'>
-            Enter your credentials to continue
-          </p>
-        </CardHeader>
+    <AuthCard title='Welcome back' subtitle='Sign in to continue to LeadFlow'>
+      <form onSubmit={handleSubmit} className='space-y-4'>
+        <div className='space-y-2'>
+          <Label>Email</Label>
+          <Input
+            placeholder='you@example.com'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoFocus
+          />
+        </div>
 
-        <CardContent className='space-y-4'>
-          {/* EMAIL */}
-          <div className='space-y-2'>
-            <Label>Email</Label>
-            <Input
-              placeholder='you@example.com'
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-          </div>
+        <div className='space-y-2'>
+          <Label>Password</Label>
+          <Input
+            type='password'
+            placeholder='••••••••'
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
 
-          {/* PASSWORD */}
-          <div className='space-y-2'>
-            <Label>Password</Label>
-            <Input
-              type='password'
-              placeholder='••••••••'
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyDown={handleKeyDown}
-            />
-          </div>
+        <Button
+          type='submit'
+          className='w-full'
+          disabled={loading || demoLoading}
+        >
+          {loading ? 'Signing in...' : 'Sign in'}
+        </Button>
 
-          {/* MAIN BUTTON */}
-          <Button
-            className='w-full'
-            onClick={() => handleLogin()}
-            disabled={loading || demoLoading}
+        <Button
+          type='button'
+          variant='secondary'
+          className='w-full'
+          onClick={handleDemo}
+          disabled={loading || demoLoading}
+        >
+          {demoLoading ? 'Loading demo...' : 'Try demo'}
+        </Button>
+
+        <div className='text-sm text-center text-muted-foreground'>
+          Don’t have an account?{' '}
+          <span
+            className='underline cursor-pointer hover:text-foreground'
+            onClick={() => router.push('/register')}
           >
-            {loading ? 'Signing in...' : 'Sign in'}
-          </Button>
-
-          {/* DEMO BUTTON */}
-          <Button
-            variant='secondary'
-            className='w-full'
-            onClick={handleDemoLogin}
-            disabled={loading || demoLoading}
-          >
-            {demoLoading ? 'Loading demo...' : 'Try demo'}
-          </Button>
-
-          {/* LINK */}
-          <div className='text-sm text-center text-muted-foreground'>
-            Don’t have an account?{' '}
-            <span
-              className='underline cursor-pointer'
-              onClick={() => router.push('/register')}
-            >
-              Register
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+            Create account
+          </span>
+        </div>
+      </form>
+    </AuthCard>
   );
 }
