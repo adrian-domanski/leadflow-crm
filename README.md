@@ -1,84 +1,175 @@
-# 🚀 LeadFlow CRM
+# LeadFlow CRM
 
-LeadFlow CRM is a backend application for managing sales leads, built
-with **FastAPI** and designed using **clean architecture (Vertical
-Slice)**.
+🚀 **Live Demo:** https://leadcrm.kodario.com/
 
-The project simulates a real-world CRM system with a sales pipeline and
-analytics.
+LeadFlow is a modern full-stack CRM application for managing leads, built with React, Next.js, FastAPI, and Docker.  
+It is designed to be scalable, clean, and production-ready with HTTPS support via reverse proxy.
 
-------------------------------------------------------------------------
+---
 
-## 🎯 Features
+## 📸 Screenshots
 
-### 🔐 Authentication
+![Dashboard](docs/screenshot-1.png)
+![Leads](docs/screenshot-2.png)
+![Analytics](docs/screenshot-3.png)
 
--   User registration and login
--   JWT authentication (access token)
--   Protected endpoints
--   Password hashing
+---
 
-------------------------------------------------------------------------
+## 🚀 Features
 
-### 📇 Leads
+- Lead management (CRUD)
+- Analytics dashboard
+- Authentication (JWT-based)
+- REST API with FastAPI
+- Modern UI with React / Next.js
+- Dockerized environment
+- Reverse proxy with Caddy (HTTPS ready)
 
--   Create, update, and delete leads
--   Soft delete (`is_deleted`)
--   User ownership (users can only access their own data)
--   Sales pipeline statuses:
-    -   NEW
-    -   CONTACTED
-    -   QUALIFIED
-    -   WON
-    -   LOST
+---
 
-------------------------------------------------------------------------
+## 🏗️ Tech Stack
 
-### 🔍 Query Features
+### Frontend
 
--   Filtering (`status`)
--   Search (`ILIKE`)
--   Sorting (`created_at`)
--   Pagination (`page`, `limit`)
+- React
+- Next.js
+- Axios
 
-------------------------------------------------------------------------
+### Backend
 
-### 📊 Analytics
+- FastAPI
+- Uvicorn
 
--   Lead statistics:
-    -   total
-    -   won
-    -   lost
-    -   conversion rate
--   Status breakdown
--   Time-series (leads per day)
+### Infrastructure
 
-------------------------------------------------------------------------
+- Docker & Docker Compose
+- Caddy (reverse proxy)
 
-## 🧱 Tech Stack
+---
 
--   FastAPI
--   SQLAlchemy
--   PostgreSQL
--   Alembic
--   Pydantic
+## 📦 Project Structure
 
-------------------------------------------------------------------------
-
-## ▶️ How to Run
-
-``` bash
-git clone <repo-url>
-cd backend
-pip install -r requirements.txt
-alembic upgrade head
-uvicorn app.main:app --reload
+```
+.
+├── frontend/        # Next.js app
+├── backend/         # FastAPI app
+├── docker-compose.yml
+├── Caddyfile
+└── docs/            # screenshots
 ```
 
-------------------------------------------------------------------------
+---
 
-## 📌 Project Goal
+## ⚙️ Setup
 
-This project demonstrates: - Backend API design - Database modeling &
-migrations - Clean architecture (Vertical Slice) - Real-world features
-(auth, pipeline, analytics)
+### 1. Clone repository
+
+```bash
+git clone https://github.com/your-username/leadflow-crm.git
+cd leadflow-crm
+```
+
+---
+
+### 2. Run with Docker
+
+```bash
+docker compose up --build
+```
+
+---
+
+### 3. Access app
+
+- Frontend: https://leadcrm.kodario.com/
+- API: https://leadcrm.kodario.com/api
+
+---
+
+## 🔧 Configuration
+
+### Environment Variables (Frontend)
+
+```
+NEXT_PUBLIC_API_URL=/api
+```
+
+---
+
+## 🧠 Important Notes
+
+### Reverse Proxy (Caddy)
+
+All API requests are proxied:
+
+```
+/api/* → backend
+/* → frontend
+```
+
+---
+
+### FastAPI Proxy Fix
+
+To properly handle HTTPS behind a reverse proxy:
+
+```bash
+uvicorn app.main:app --proxy-headers --forwarded-allow-ips="*"
+```
+
+---
+
+### Trailing Slash Issue
+
+FastAPI distinguishes between:
+
+```
+/api/leads
+/api/leads/
+```
+
+Recommended fix:
+
+```python
+app = FastAPI(redirect_slashes=False)
+```
+
+---
+
+## 🐛 Common Issues
+
+### Mixed Content Error
+
+Cause:
+
+- Backend returning `http://` URLs
+
+Fix:
+
+- Use `--proxy-headers` in Uvicorn
+- Set `X-Forwarded-Proto` in Caddy
+
+---
+
+### 404 on API Endpoints
+
+Cause:
+
+- Trailing slash mismatch
+
+Fix:
+
+- Ensure consistent endpoint usage or disable redirect_slashes
+
+---
+
+## 📄 License
+
+MIT License
+
+---
+
+## 👨‍💻 Author
+
+Adrian Domański  
+Full-Stack Developer
