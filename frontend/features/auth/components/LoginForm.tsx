@@ -61,6 +61,7 @@ export default function LoginForm() {
         <div className='space-y-2'>
           <Label>Email</Label>
           <Input
+            data-testid='email-input'
             placeholder='you@example.com'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -71,6 +72,7 @@ export default function LoginForm() {
         <div className='space-y-2'>
           <Label>Password</Label>
           <Input
+            data-testid='password-input'
             type='password'
             placeholder='••••••••'
             value={password}
