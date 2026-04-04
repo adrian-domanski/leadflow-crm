@@ -5,9 +5,14 @@
     "source.fixAll.ruff": "explicit"
   },
   "editor.renderWhitespace": "all",
-  "editor.insertSpaces": false,
+  "editor.insertSpaces": true,
   "files.exclude": {
     "**/__pycache__": true
   },
-  "makefile.configureOnOpen": false
+  "makefile.configureOnOpen": false,
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true
 }

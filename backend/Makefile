@@ -13,3 +13,12 @@ clean:
 dev-logs:
 	docker-compose -f docker-compose.dev.yml logs -f
 
+test-integration:
+	pytest tests/integration
+
+test-unit:
+	pytest tests/unit
+
+test-all:
+	pytest
+

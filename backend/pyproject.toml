@@ -15,3 +15,6 @@ fix = true
 
 [tool.ruff.lint.isort]
 known-first-party = ["app"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]

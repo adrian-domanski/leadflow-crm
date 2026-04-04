@@ -10,7 +10,7 @@ from . import schemas, service
 router = APIRouter(prefix="/leads", tags=["leads"], dependencies=[Depends(get_current_user)])
 
 
-@router.post("/")
+@router.post("/", status_code=201)
 def create_lead(
     data: schemas.LeadCreate, db: Session = Depends(get_db), current_user=Depends(get_current_user)
 ):
