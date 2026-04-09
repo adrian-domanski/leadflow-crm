@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   postgres:
+    container_name: leadcrm_postgres
     image: postgres:15
     restart: always
     environment:
@@ -17,8 +18,11 @@ services:
       - postgres_data:/var/lib/postgresql/data
 
   backend:
+    container_name: leadcrm_backend
     build: ./backend
     restart: always
+    networks:
+      - shared_network
     env_file:
       - .env
     depends_on:
@@ -31,12 +35,15 @@ services:
       "
 
   frontend:
+    container_name: leadcrm_frontend
     build: ./frontend
     restart: always
     env_file:
       - .env
     depends_on:
       - backend
+    networks:
+      - shared_network
 
   caddy:
     image: caddy:2
@@ -48,6 +55,7 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
       - caddy_data:/data
       - caddy_config:/config
+      - ./store-frontend/dist:/srv/store
 
 volumes:
   postgres_data:

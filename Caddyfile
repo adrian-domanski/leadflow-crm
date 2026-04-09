@@ -1,12 +1,26 @@
 leadcrm.kodario.com, www.leadcrm.kodario.com {
 
     handle /api/* {
-        reverse_proxy backend:8000 {
+        reverse_proxy leadcrm_backend:8000 {
             header_up X-Forwarded-Proto https
         }
     }
 
     handle {
-        reverse_proxy frontend:3000
+        reverse_proxy leadcrm_frontend:3000
     }
+}
+
+store.kodario.com, www.store.kodario.com {
+
+    encode gzip
+
+    root * /srv/store
+    file_server
+
+    handle /api/* {
+        reverse_proxy store_backend:8000
+    }
+
+    try_files {path} /index.html
 }
