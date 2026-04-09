@@ -16,6 +16,8 @@ services:
       retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - shared_network
 
   backend:
     container_name: leadcrm_backend
