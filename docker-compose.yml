@@ -58,6 +58,8 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ./store-frontend/dist:/srv/store
+    networks:
+      - shared_network
 
 volumes:
   postgres_data:
