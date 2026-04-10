@@ -13,14 +13,22 @@ leadcrm.kodario.com, www.leadcrm.kodario.com {
 
 shop.kodario.com, www.shop.kodario.com {
 
-    encode gzip
+    handle /api/* {
+        reverse_proxy store_backend:8000 {
+            header_up X-Forwarded-Proto https
+        }
+    }
 
-    @backend path /api/*
-    reverse_proxy @backend store_backend:8000
+    handle {
+        root * /srv/store
+        file_server
+        try_files {path} /index.html
+    }
 
-    root * /srv/store
-    file_server
-
-    # React fallback ONLY dla frontu
-    try_files {path} /index.html
+    handle /static/* {
+        reverse_proxy store_backend:8000 {
+            header_up X-Forwarded-Proto https
+        }
+    }
+    
 }
