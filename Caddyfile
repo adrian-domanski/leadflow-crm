@@ -11,7 +11,7 @@ leadcrm.kodario.com, www.leadcrm.kodario.com {
     }
 }
 
-store.kodario.com, www.store.kodario.com {
+shop.kodario.com, www.shop.kodario.com {
 
     encode gzip
 
