@@ -15,16 +15,12 @@ shop.kodario.com, www.shop.kodario.com {
 
     encode gzip
 
+    @backend path /api/*
+    reverse_proxy @backend store_backend:8000
+
     root * /srv/store
     file_server
 
-    handle /api/* {
-        reverse_proxy store_backend:8000
-    }
-
-     handle /admin/* {
-        reverse_proxy store_backend:8000
-    }
-
+    # React fallback ONLY dla frontu
     try_files {path} /index.html
 }
