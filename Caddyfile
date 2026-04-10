@@ -22,5 +22,9 @@ store.kodario.com, www.store.kodario.com {
         reverse_proxy store_backend:8000
     }
 
+     handle /admin/* {
+        reverse_proxy store_backend:8000
+    }
+
     try_files {path} /index.html
 }
