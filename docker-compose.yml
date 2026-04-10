@@ -58,6 +58,8 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - ../ecommerce-django-react/frontend/dist:/srv/store
+      - shop_static_volume:/app/staticfiles
+      - shop_media_volume:/app/media
     networks:
       - shared_network
 
@@ -65,6 +67,8 @@ volumes:
   postgres_data:
   caddy_data:
   caddy_config:
+  shop_static_volume:
+  shop_media_volume:
 
 networks:
   shared_network:
