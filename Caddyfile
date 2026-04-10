@@ -19,22 +19,20 @@ shop.kodario.com, www.shop.kodario.com {
         }
     }
 
+    handle /static/* {
+        root * /app
+        file_server
+    }
+
+    handle /media/* {
+        root * /app
+        file_server
+    }
+
     handle {
         root * /srv/store
         file_server
         try_files {path} /index.html
-    }
-
-    @static path /static/*
-        handle @static {
-        root * /app/staticfiles
-        file_server
-    }
-
-    @media path /media/*
-        handle @media {
-        root * /app/media
-        file_server
-    }
+    }    
     
 }
